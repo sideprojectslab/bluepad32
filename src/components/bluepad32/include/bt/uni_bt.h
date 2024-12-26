@@ -46,6 +46,8 @@ void uni_bt_enable_pairing_safe(bool enabled);
 // Must be called from BTthread
 void uni_bt_enable_pairing_unsafe(bool enabled);
 
+void uni_bt_forget_devices_safe();
+
 // Enables the BLE service
 void uni_bt_enable_service_safe(bool enabled);
 

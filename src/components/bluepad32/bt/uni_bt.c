@@ -96,6 +96,7 @@ enum {
     CMD_BLE_SERVICE_DISABLE,
     CMD_PAIR_ENABLE,
     CMD_PAIR_DISABLE,
+    CMD_FORGET_DEVICES
 };
 
 static void bluetooth_del_keys(void) {
@@ -229,6 +230,9 @@ static void cmd_callback(void* context) {
         case CMD_PAIR_DISABLE:
             enable_pairing(false);
             break;
+        case CMD_FORGET_DEVICES:
+            uni_bt_allowlist_remove_all();
+            break;
         default:
             loge("Unknown command: %#x\n", cmd);
             break;
@@ -272,6 +276,12 @@ void uni_bt_enable_new_connections_unsafe(bool enabled) {
 void uni_bt_enable_pairing_safe(bool enabled) {
     cmd_callback_registration.callback = &cmd_callback;
     cmd_callback_registration.context = (void*)(enabled ? (intptr_t)CMD_PAIR_ENABLE : (intptr_t)CMD_PAIR_DISABLE);
+    btstack_run_loop_execute_on_main_thread(&cmd_callback_registration);
+}
+
+void uni_bt_forget_devices_safe() {
+    cmd_callback_registration.callback = &cmd_callback;
+    cmd_callback_registration.context = (void*)((intptr_t)CMD_FORGET_DEVICES);
     btstack_run_loop_execute_on_main_thread(&cmd_callback_registration);
 }
 
